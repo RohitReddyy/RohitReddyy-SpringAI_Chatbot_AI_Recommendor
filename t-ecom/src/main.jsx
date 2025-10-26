@@ -6,6 +6,10 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import 'react-toastify/dist/ReactToastify.css';
 
+// Load performance test in development
+if (import.meta.env.DEV) {
+  import('./utils/performanceTest.js');
+}
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>

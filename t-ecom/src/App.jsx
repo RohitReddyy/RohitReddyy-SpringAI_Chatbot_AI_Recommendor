@@ -1,18 +1,31 @@
-import React, { useState } from "react";
-import Home from "./components/Home";
-import Navbar from "./components/Navbar";
-import Cart from "./components/Cart";
-import AddProduct from "./components/AddProduct";
-import Product from "./components/Product";
+import React, { useState, Suspense, lazy } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AppProvider } from "./Context/Context";
-import UpdateProduct from "./components/UpdateProduct";
-import AskAi from "./components/AskAI";
-import SearchResults from "./components/SearchResults";
-import Order from "./components/Order";
+import Navbar from "./components/Navbar"; // Load Navbar immediately - it's critical UI
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import { ToastContainer } from "react-toastify";
+
+// Import lazy-loaded components from routes
+import { 
+  Home, 
+  Cart, 
+  AddProduct, 
+  Product, 
+  UpdateProduct, 
+  AskAi, 
+  SearchResults, 
+  Order
+} from "./routes";
+
+// Simple, lightweight loading component
+const LoadingSpinner = () => (
+  <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '200px' }}>
+    <div className="spinner-border text-primary" role="status">
+      <span className="visually-hidden">Loading...</span>
+    </div>
+  </div>
+);
 
 function App() {
   const [selectedCategory, setSelectedCategory] = useState("");
@@ -25,26 +38,25 @@ function App() {
   return (
     <AppProvider>
       <BrowserRouter>
-      <ToastContainer autoClose={2000}
-  hideProgressBar={true} />
+        <ToastContainer autoClose={2000} hideProgressBar={true} />
         <Navbar onSelectCategory={handleCategorySelect} />
         <div className="min-vh-100 bg-light">
-          <Routes>
-            <Route
-              path="/"
-              element={
-                <Home selectedCategory={selectedCategory} />
-              }
-            />
-            <Route path="/add_product" element={<AddProduct />} />
-            <Route path="/product" element={<Product />} />
-            <Route path="product/:id" element={<Product />} />
-            <Route path="/cart" element={<Cart />} />
-            <Route path="/product/update/:id" element={<UpdateProduct />} />
-            <Route path="/askai" element={<AskAi />} />
-            <Route path="/search-results" element={<SearchResults />} />
-            <Route path="/orders" element={<Order />} />
-          </Routes>
+          <Suspense fallback={<LoadingSpinner />}>
+            <Routes>
+              <Route
+                path="/"
+                element={<Home selectedCategory={selectedCategory} />}
+              />
+              <Route path="/add_product" element={<AddProduct />} />
+              <Route path="/product" element={<Product />} />
+              <Route path="product/:id" element={<Product />} />
+              <Route path="/cart" element={<Cart />} />
+              <Route path="/product/update/:id" element={<UpdateProduct />} />
+              <Route path="/askai" element={<AskAi />} />
+              <Route path="/search-results" element={<SearchResults />} />
+              <Route path="/orders" element={<Order />} />
+            </Routes>
+          </Suspense>
         </div>
       </BrowserRouter>
     </AppProvider>
